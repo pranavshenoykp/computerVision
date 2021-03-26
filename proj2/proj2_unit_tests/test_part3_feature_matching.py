@@ -63,4 +63,9 @@ def test_match_features_ratio_test():
 
     result, confidences = match_features_ratio_test(feats1, feats2)
 
+    print(result)
+    print(confidences)
+
+    print(result[np.argsort(result[:, 0])])
+
     assert np.array_equal(matches, result[np.argsort(result[:, 0])])

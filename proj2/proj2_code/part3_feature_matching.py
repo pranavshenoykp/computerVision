@@ -36,9 +36,9 @@ def compute_feature_distances(
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`compute_feature_distances` function in ' +
-        '`part3_feature_matching.py` needs to be implemented')
-
+    dists = np.zeros([features1.shape[0], features2.shape[0]])
+    for i in range(features1.shape[0]):
+        dists[i,:] = np.linalg.norm(features2 - features1[i], axis = 1)
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
@@ -83,8 +83,19 @@ def match_features_ratio_test(
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`match_features_ratio_test` function in ' +
-        '`part3_feature_matching.py` needs to be implemented')
+    dists = compute_feature_distances(features1, features2)
+    matches = []
+    confidences = []
+    threshold = 0.7
+
+    for i in range(dists.shape[0]):
+        tmp = np.sort(dists[i,:])
+        if (tmp[0] / tmp[1]) < threshold:
+            confidences.append(tmp[0] / tmp[1])
+            matches.append([i, int(np.argmin(dists[i,:]))])
+
+    matches = np.array(matches)
+    confidences = np.array(confidences)
 
     ###########################################################################
     #                             END OF YOUR CODE                            #

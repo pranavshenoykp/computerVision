@@ -48,12 +48,15 @@ def get_magnitudes_and_orientations(
     magnitudes = []  # placeholder
     orientations = []  # placeholder
 
+    magnitudes = np.sqrt(Ix * Ix + Iy * Iy)
+    orientations = np.arctan2(Iy, Ix)
+
+
     ###########################################################################
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`get_magnitudes_and_orientations()` function ' +
-        'in `part4_sift_descriptor.py` needs to be implemented')
+
 
     ###########################################################################
     #                             END OF YOUR CODE                            #
@@ -61,6 +64,28 @@ def get_magnitudes_and_orientations(
 
     return magnitudes, orientations
 
+def simplify_blocks(feature: np.ndarray, nrows: int=4, ncols: int=4) -> np.ndarray:
+    """
+    Converts a 16x16 patch to a 4x4x4 patch and then into a sorted 16x16 patch
+    array([[ 0,  1,  2,  3,  4,  5,  6,  7],
+       [ 8,  9, 10, 11, 12, 13, 14, 15],
+       [16, 17, 18, 19, 20, 21, 22, 23],
+       [24, 25, 26, 27, 28, 29, 30, 31],
+       [32, 33, 34, 35, 36, 37, 38, 39],
+       [40, 41, 42, 43, 44, 45, 46, 47],
+       [48, 49, 50, 51, 52, 53, 54, 55],
+       [56, 57, 58, 59, 60, 61, 62, 63]])
+
+    to 
+
+    array([[ 0,  1,  2,  3,  8,  9, 10, 11, 16, 17, 18, 19, 24, 25, 26, 27],
+       [ 4,  5,  6,  7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31],
+       [32, 33, 34, 35, 40, 41, 42, 43, 48, 49, 50, 51, 56, 57, 58, 59],
+       [36, 37, 38, 39, 44, 45, 46, 47, 52, 53, 54, 55, 60, 61, 62, 63]])
+    """
+    h,w = feature.shape
+    tmp = feature.reshape(h//nrows,nrows,-1,ncols).swapaxes(1,2).reshape(-1, nrows,ncols)
+    return (tmp.ravel().reshape(-1,nrows*ncols))
 
 def get_gradient_histogram_vec_from_patch(
     window_magnitudes: np.ndarray,
@@ -99,8 +124,15 @@ def get_gradient_histogram_vec_from_patch(
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`get_gradient_histogram_vec_from_patch` ' +
-        'function in `part4_sift_descriptor.py` needs to be implemented')
+    bins = [-np.pi, -3*np.pi/4, -np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2, 3*np.pi/4, np.pi]
+    window_magnitudes = simplify_blocks(window_magnitudes)
+    window_orientations = simplify_blocks(window_orientations)
+
+    feature_vector = np.zeros([16,8])
+    for i in range(16):
+        feature_vector[i,:] = np.histogram(window_orientations[i], bins=bins, weights = window_magnitudes[i])[0]
+        
+    wgh = feature_vector.reshape(128,1)
 
     ###########################################################################
     #                             END OF YOUR CODE                            #

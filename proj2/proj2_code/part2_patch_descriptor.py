@@ -29,8 +29,14 @@ def compute_normalized_patch_descriptors(
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`compute_normalized_patch_descriptors` ' +
-        'function in`part2_patch_descriptor.py` needs to be implemented')
+    fvs = np.zeros([len(X), feature_width*feature_width])
+    p_min = int(feature_width/2) -1
+    p_max = int(feature_width/2) +1
+
+    for i in range(len(X)):
+        patch = image_bw[int(X[i] - p_min):int(X[i] + p_max), int(Y[i] - p_min):int(Y[i] + p_max)]
+        fvs[i,:] = patch.reshape(1,256) / np.linalg.norm(patch)
+
 
     ###########################################################################
     #                             END OF YOUR CODE                            #

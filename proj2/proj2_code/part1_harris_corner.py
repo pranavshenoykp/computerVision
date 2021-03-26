@@ -58,8 +58,6 @@ def compute_image_gradients(image_bw: np.ndarray) -> Tuple[np.ndarray, np.ndarra
     Ix = Ix_tensor.numpy()[0,0,:,:]
     Iy = Iy_tensor.numpy()[0,0,:,:]
 
-    print(np.shape(Ix))
-
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
@@ -331,7 +329,7 @@ def nms_maxpool_pytorch(
     locations that are equal to their maximum. Multiply this binary
     image, multiplied with the cornerness response values. We'll be testing
     only 1 image at a time.
-
+j
     Args:
         R: score response map of shape (M,N)
         k: number of interest points (take top k by confidence)
@@ -347,8 +345,27 @@ def nms_maxpool_pytorch(
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`nms_maxpool_pytorch` function in ' +
-        '`part1_harris_corner.py` needs to be implemented')
+    median = np.nanmedian(R)
+    R[R < median] = 0
+    maxpool = maxpool_numpy(R, ksize)
+
+    binary_R = np.copy(R)
+
+    binary_R[binary_R != maxpool] = 0
+
+
+    coordinates = np.where(binary_R > 0)
+    confidences = binary_R[coordinates]
+
+    coordinates = np.array(coordinates)
+
+    idx = np.argsort(confidences)
+
+    confidences = confidences[idx][::-1][:int(k)]
+    coordinates = coordinates.T[idx][::-1][:int(k)]
+
+    x = coordinates[:,0]
+    y = coordinates[:,1]
 
     ###########################################################################
     #                           END OF YOUR CODE                              #
@@ -383,9 +400,21 @@ def remove_border_vals(
     ###########################################################################
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
+    h,w = img.shape
 
-    raise NotImplementedError('`remove_border_vals` function in ' +
-        '`part1_harris_corner.py` needs to be implemented')
+    h_min = 7
+    h_max = h - 9
+
+    w_min = 7
+    w_max = w - 9
+
+    x_mask = np.logical_and(x > h_min, x < h_max)
+    y_mask = np.logical_and(y > w_min, y < w_max)
+    mask = np.logical_and(x_mask, y_mask)
+
+    x = x[mask]
+    y = y[mask]
+    c = c[mask]
 
     ###########################################################################
     #                           END OF YOUR CODE                              #
@@ -419,8 +448,9 @@ def get_harris_interest_points(
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`get_harris_interest_points` function in ' +
-        '`part1_harris_corner.py` needs to be implemented')
+    R = compute_harris_response_map(image_bw)
+    x, y, c = nms_maxpool_pytorch(R, k, ksize = 7)
+    x, y, c = remove_border_vals(image_bw, x, y, c)
 
     ###########################################################################
     #                           END OF YOUR CODE                              #
