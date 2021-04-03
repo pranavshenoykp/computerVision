@@ -8,6 +8,7 @@ import time
 import torch
 
 from proj2_code.part1_harris_corner import compute_image_gradients
+from proj2_code.part1_harris_corner import get_gaussian_kernel_2D_pytorch
 from torch import nn
 from typing import Tuple
 
@@ -48,14 +49,14 @@ def get_magnitudes_and_orientations(
     magnitudes = []  # placeholder
     orientations = []  # placeholder
 
-    magnitudes = np.sqrt(Ix * Ix + Iy * Iy)
-    orientations = np.arctan2(Iy, Ix)
-
+    
 
     ###########################################################################
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
+    magnitudes = np.sqrt(Ix * Ix + Iy * Iy)
+    orientations = np.arctan2(Iy, Ix)
 
 
     ###########################################################################
@@ -89,7 +90,8 @@ def simplify_blocks(feature: np.ndarray, nrows: int=4, ncols: int=4) -> np.ndarr
 
 def get_gradient_histogram_vec_from_patch(
     window_magnitudes: np.ndarray,
-    window_orientations: np.ndarray
+    window_orientations: np.ndarray,
+    gaussian: np.ndarray
 ) -> np.ndarray:
     """ Given 16x16 patch, form a 128-d vector of gradient histograms.
 
@@ -125,7 +127,7 @@ def get_gradient_histogram_vec_from_patch(
     ###########################################################################
 
     bins = [-np.pi, -3*np.pi/4, -np.pi/2, -np.pi/4, 0, np.pi/4, np.pi/2, 3*np.pi/4, np.pi]
-    window_magnitudes = simplify_blocks(window_magnitudes)
+    window_magnitudes = simplify_blocks(window_magnitudes) * gaussian
     window_orientations = simplify_blocks(window_orientations)
 
     feature_vector = np.zeros([16,8])
@@ -175,7 +177,7 @@ def get_feat_vec(
         y: A float, the y-coordinate of the interest point
         magnitudes: A numpy array of shape (m,n), representing image gradients
             at each pixel location
-        orientations: A numpy array of shape (m,n), representing gradient
+        orientations: A numpy array of shape (m,n), representing gradient 
             orientations at each pixel location
         feature_width: integer representing the local feature width in pixels.
             You can assume that feature_width will be a multiple of 4 (i.e.,
@@ -194,8 +196,19 @@ def get_feat_vec(
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
 
-    raise NotImplementedError('`get_feat_vec` function in ' +
-        '`student_sift.py` needs to be implemented')
+    gaussian = get_gaussian_kernel_2D_pytorch(16,8)
+    gaussian = gaussian.numpy()[0,0,:,:]
+    gaussian = gaussian/np.max(gaussian)
+
+    h_start = x - (int(feature_width/2) - 1)
+    h_end = x + (int(feature_width/2) + 1)
+    w_start = y - (int(feature_width/2) - 1)
+    w_end = y + (int(feature_width/2) + 1)
+    orientations_patch = orientations[h_start:h_end, w_start:w_end]
+    magnitudes_patch = magnitudes[h_start:h_end, w_start:w_end] 
+    feat_patch = get_gradient_histogram_vec_from_patch(magnitudes_patch, orientations_patch, gaussian)
+    feat_patch = feat_patch / np.linalg.norm(feat_patch)
+    fv = np.sqrt(feat_patch)
 
     ###########################################################################
     #                             END OF YOUR CODE                            #
@@ -230,13 +243,18 @@ def get_SIFT_descriptors(
             standard SIFT). These are the computed features.
     """
     assert image_bw.ndim == 2, 'Image must be grayscale'
+    fvs = []
 
     ###########################################################################
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
-
-    raise NotImplementedError('`get_SIFT_descriptors` function in ' +
-        '`part4_sift_descriptor.py` needs to be implemented')
+    Ix, Iy = compute_image_gradients(image_bw)
+    magnitudes, orientations = get_magnitudes_and_orientations(Ix, Iy)
+    for i in range(len(X)):
+        fv = get_feat_vec(X[i], Y[i], magnitudes, orientations)
+        fvs.append(np.squeeze(fv))
+    
+    # print(fvs)
 
     ###########################################################################
     #                             END OF YOUR CODE                            #

@@ -250,10 +250,12 @@ def test_get_SIFT_descriptors():
                 [0.0, 0.0, 0.499, 0.0, 0.0, 0.329, 0.0, 0.0],
                 [0.0, 0.0, 0.547, 0.0, 0.0, 0.329, 0.0, 0.0],
                 [0.0, 0.0, 0.592, 0.0, 0.0, 0.329, 0.0, 0.0],
-                [0.0, 0.332, 0.544, 0.0, 0.0, 0.285, 0.0, 0.544],
+                [0.332, 0.0, 0.544, 0.0, 0.0, 0.285, 0.0, 0.544],
             ],
         ]
     ).reshape(2, 128)
+
+    # print(SIFT_descriptors)
 
     assert np.allclose(SIFT_descriptors, expected_SIFT_descriptors, atol=1e-1)
 

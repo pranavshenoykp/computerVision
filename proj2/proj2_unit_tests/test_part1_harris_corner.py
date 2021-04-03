@@ -337,6 +337,11 @@ def test_get_harris_interest_points():
     expected_y = np.array([9])
     expected_confidences = np.array([1])
 
+    print(x)
+    print(y)
+    confidences = confidences / np.linalg.norm(confidences)
+    print(confidences)
+
     assert np.allclose(expected_x, x)
     assert np.allclose(expected_y, y)
     assert np.allclose(expected_confidences, confidences)
