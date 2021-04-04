@@ -37,12 +37,19 @@ def compute_feature_distances(
     ###########################################################################
 
     dists = np.zeros([np.shape(features1)[0], np.shape(features2)[0]])
+    print(np.shape(dists))
+    print(np.shape(features1))
     for i in range(np.shape(features1)[0]):
         dists[i,:] = np.linalg.norm(features2 - features1[i], axis = 1)
+        if np.any(dists[i,:] == 0):
+            print(i,features1[i])
+            # for j in range(np.shape(features2)[0]):
+            #     if dists[i,j] == 0:
+            #         print(i,j)
+            
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
-
     return dists
 
 
@@ -90,6 +97,7 @@ def match_features_ratio_test(
 
     for i in range(dists.shape[0]):
         tmp = np.sort(dists[i,:])
+        # print(tmp[0], tmp[1])
         if (tmp[0] / tmp[1]) < threshold:
             confidences.append(tmp[0] / tmp[1])
             matches.append([i, int(np.argmin(dists[i,:]))])

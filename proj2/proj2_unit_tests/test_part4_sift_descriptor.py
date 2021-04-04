@@ -319,10 +319,10 @@ def test_feature_matching_accuracy():
         image2,
         eval_file,
         scale_factor,
-        X1[matches[:, 0]],
         Y1[matches[:, 0]],
-        X2[matches[:, 1]],
+        X1[matches[:, 0]],
         Y2[matches[:, 1]],
+        X2[matches[:, 1]],
     )
 
     print(f"Your Feature matching pipeline achieved {100 * acc:.2f}% accuracy to run on Notre Dame")

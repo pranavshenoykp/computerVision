@@ -33,6 +33,8 @@ def compute_normalized_patch_descriptors(
     p_min = int(feature_width/2) -1
     p_max = int(feature_width/2) +1
 
+    print(X,Y)
+
     for i in range(len(X)):
         patch = image_bw[int(X[i] - p_min):int(X[i] + p_max), int(Y[i] - p_min):int(Y[i] + p_max)]
         fvs[i,:] = patch.reshape(1,256) / np.linalg.norm(patch)

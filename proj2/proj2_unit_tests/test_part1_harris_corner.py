@@ -236,11 +236,11 @@ def test_nms_maxpool_pytorch():
 
     R = np.array(
     [
-        [1,2,2,1,2],
-        [1,6,2,1,1],
-        [2,2,1,1,1],
-        [1,1,1,7,1],
-        [1,1,1,1,1]
+        [1,2,2,1,2,1,1],
+        [1,2,6,1,1,1,1],
+        [2,2,1,1,1,1,1],
+        [1,1,1,1,1,7,1],
+        [1,1,1,1,1,1,1]
     ]).astype(np.float32)
 
     k = 2
@@ -249,7 +249,9 @@ def test_nms_maxpool_pytorch():
     x, y, c = nms_maxpool_pytorch(R, k, ksize)
 
     expected_x = np.array([3,1])
-    expected_y = np.array([3,1])
+    expected_y = np.array([5,2])
+
+    print(x,y)
 
     assert np.allclose(x, expected_x)
     assert np.allclose(y, expected_y)

@@ -353,7 +353,6 @@ j
 
     binary_R[binary_R != maxpool] = 0
 
-
     coordinates = np.where(binary_R > 0)
     confidences = binary_R[coordinates]
 
@@ -372,7 +371,6 @@ j
     ###########################################################################
 
     return x, y, confidences
-
 
 def remove_border_vals(
     img: np.ndarray,
