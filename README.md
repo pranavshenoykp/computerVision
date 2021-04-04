@@ -1,1 +1,1 @@
-Computer Vision projects from Georgia Tech CS6476
+Computer Vision projects from Georgia Tech CS CV course
