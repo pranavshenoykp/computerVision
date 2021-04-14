@@ -1,0 +1,4 @@
+required_directories:
+  - proj3_code
+optional_directories:
+  - additional_data
