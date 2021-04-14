@@ -36,7 +36,7 @@ def calculate_num_ransac_iterations(
 
 
 def get_error_fundamental_matrix(
-    point_a: np.ndarray, point_b: np.ndarray, F: np.ndarray) -> int:
+    point_a: np.ndarray, point_b: np.ndarray, F: np.ndarray) -> float:
     """
     Calculates the error function using the property of fundamental matrix:
     [u' v' 1] [F] [u v 1]' = 0
@@ -47,7 +47,7 @@ def get_error_fundamental_matrix(
     b = np.mat(np.append(point_b, 1.0))
     F = np.mat(F)
 
-    err = np.abs(int(np.matmul(a, np.matmul(F, b.T))))
+    err = float(np.abs(np.matmul(a, np.matmul(F, b.T))))
 
     return err
 
@@ -99,8 +99,8 @@ def ransac_fundamental_matrix(
     ###########################################################################
 
     sample_size = 8
-    prob_success = 0.99
-    ind_prob_correct = 0.6
+    prob_success = 0.95
+    ind_prob_correct = 0.5
 
     N_ransac = calculate_num_ransac_iterations(prob_success, sample_size, ind_prob_correct)
 
@@ -108,11 +108,13 @@ def ransac_fundamental_matrix(
 
     N = min(N_ransac, N_matches)
 
-    threshold =  0.1
+    threshold =  0.01
 
     best_F = np.zeros([3,3])
-    inliers_a = np.zeros([sample_size, 2])
-    inliers_b = np.zeros([sample_size, 2])
+    inliers_a = []
+    inliers_b = []
+    inliers_for_match_a = []
+    inliers_for_match_b = []
     most_pts_in_thres = 0
 
     for ii in range(N):
@@ -122,21 +124,31 @@ def ransac_fundamental_matrix(
 
         F_tmp = estimate_fundamental_matrix(matches_a_selected, matches_b_selected)
 
-        num_pts_in_thres = np.zeros(N_matches, dtype=np.bool)
+        sum_pts_in_thres = 0
         for jj in range(N_matches):
-            num_pts_in_thres[jj] = get_error_fundamental_matrix(matches_a[jj,:], matches_b[jj,:], F_tmp) < threshold
+            if get_error_fundamental_matrix(matches_a[jj,:], matches_b[jj,:], F_tmp) < threshold:
+                sum_pts_in_thres = sum_pts_in_thres + 1
+                inliers_for_match_a.append(matches_a[jj,:])
+                inliers_for_match_b.append(matches_b[jj,:])
 
-        sum_pts_in_thres = np.sum(num_pts_in_thres)
 
         if sum_pts_in_thres > most_pts_in_thres:
             most_pts_in_thres = sum_pts_in_thres
             best_F = F_tmp
-            inliers_a = matches_a[choices]
-            inliers_b = matches_b[choices]
+            inliers_a = np.array(inliers_for_match_a)
+            inliers_b = np.array(inliers_for_match_b)
 
-    print(most_pts_in_thres)
+        inliers_for_match_a = []
+        inliers_for_match_b = []
+        sum_pts_in_thres = 0
+
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
+
+    if np.shape(inliers_a)[0] > 30:
+        choices_inliers = np.random.choice(np.shape(inliers_a)[0], 30, replace=False)
+        inliers_a = inliers_a[choices_inliers]
+        inliers_b = inliers_b[choices_inliers]
 
     return best_F, inliers_a, inliers_b
