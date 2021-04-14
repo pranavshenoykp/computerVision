@@ -99,7 +99,7 @@ def ransac_fundamental_matrix(
     ###########################################################################
 
     sample_size = 8
-    prob_success = 0.95
+    prob_success = 0.97
     ind_prob_correct = 0.5
 
     N_ransac = calculate_num_ransac_iterations(prob_success, sample_size, ind_prob_correct)
@@ -108,7 +108,7 @@ def ransac_fundamental_matrix(
 
     N = min(N_ransac, N_matches)
 
-    threshold =  0.01
+    threshold =  0.005
 
     best_F = np.zeros([3,3])
     inliers_a = []

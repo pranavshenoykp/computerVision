@@ -92,27 +92,42 @@ def estimate_fundamental_matrix(
     # TODO: YOUR CODE HERE                                                    #
     ###########################################################################
     (N, _) = np.shape(points_a)
-    A = np.zeros([N,8])
+    A = np.zeros([N,9])
     b = -1 * np.ones(N)
 
     points_a_norm, T_a = normalize_points(points_a)
     points_b_norm, T_b = normalize_points(points_b)
 
+    # for i in range(N):
+    #     (ua, va) = points_a_norm[i,:]
+    #     (ub, vb) = points_b_norm[i,:]
+    #     A[i,:] = np.array([ua*ub, va*ub, ub, ua*vb, vb*va, vb, ua, va])
+
+    # # U, S, V = np.linalg.svd(A)
+
+    # F_tmp = np.append(np.linalg.lstsq(A,b,rcond=None)[0],1)
+    # F_tmp = np.reshape(F_tmp, (3,3))
+
+    # U, S, V = np.linalg.svd(F_tmp)
+    # S[2] = 0
+
+
+    # F_norm = np.matmul(U, np.matmul(np.diag(S),V))
+
+
     for i in range(N):
         (ua, va) = points_a_norm[i,:]
         (ub, vb) = points_b_norm[i,:]
-        A[i,:] = np.array([ua*ub, va*ub, ub, ua*vb, vb*va, vb, ua, va])
+        A[i,:] = np.array([ua*ub, va*ub, ub, ua*vb, vb*va, vb, ua, va, 1])
 
-    # U, S, V = np.linalg.svd(A)
+    U, S, V = np.linalg.svd(A)
 
-    F_tmp = np.append(np.linalg.lstsq(A,b,rcond=None)[0],1)
-    F_tmp = np.reshape(F_tmp, (3,3))
+    F_tmp = V[-1].reshape(3,3)
 
-    U, S, V = np.linalg.svd(F_tmp)
+    U,S,V = np.linalg.svd(F_tmp)
     S[2] = 0
+    F_norm = np.dot(U,np.dot(np.diag(S),V))
 
-
-    F_norm = np.matmul(U, np.matmul(np.diag(S),V))
 
     F = unnormalize_F(F_norm, T_a, T_b)
 

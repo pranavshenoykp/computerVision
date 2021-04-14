@@ -63,7 +63,7 @@ def test_estimate_fundamental_matrix():
     )
 
     # Check estimated matrix up to scale ambiguity
-    F_estimated /= F_estimated[2, 2]
+    F_estimated /= F_student[2, 2]
     F_student /= F_student[2, 2]
 
     assert np.allclose(F_student, F_estimated, atol=1e-2), "Fundamental Matrices don't Match"
