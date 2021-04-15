@@ -1,0 +1,16 @@
+name: cs6476_proj4
+channels:
+- pytorch
+- conda-forge
+- defaults
+dependencies:
+- jupyter
+- matplotlib
+- pip
+- pytest
+- python=3.8
+- pytorch=1.8.0
+- torchvision=0.9.0
+- pyyaml
+- scipy
+- opencv
