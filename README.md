@@ -1,1 +1,1 @@
-Computer Vision projects from Georgia Tech CS CV course
+Computer Vision projects from Georgia Tech and what not
