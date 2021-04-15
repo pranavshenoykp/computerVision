@@ -99,7 +99,7 @@ def ransac_fundamental_matrix(
     ###########################################################################
 
     sample_size = 8
-    prob_success = 0.97
+    prob_success = 0.99
     ind_prob_correct = 0.5
 
     N_ransac = calculate_num_ransac_iterations(prob_success, sample_size, ind_prob_correct)
@@ -108,13 +108,14 @@ def ransac_fundamental_matrix(
 
     N = min(N_ransac, N_matches)
 
-    threshold =  0.005
+    threshold =  0.01
 
     best_F = np.zeros([3,3])
     inliers_a = []
     inliers_b = []
     inliers_for_match_a = []
     inliers_for_match_b = []
+    inlier_error_for_match = []
     most_pts_in_thres = 0
 
     for ii in range(N):
@@ -126,29 +127,32 @@ def ransac_fundamental_matrix(
 
         sum_pts_in_thres = 0
         for jj in range(N_matches):
-            if get_error_fundamental_matrix(matches_a[jj,:], matches_b[jj,:], F_tmp) < threshold:
+            err = get_error_fundamental_matrix(matches_a[jj,:], matches_b[jj,:], F_tmp)
+            if err < threshold:
                 sum_pts_in_thres = sum_pts_in_thres + 1
                 inliers_for_match_a.append(matches_a[jj,:])
                 inliers_for_match_b.append(matches_b[jj,:])
+                inlier_error_for_match.append(err)
 
 
         if sum_pts_in_thres > most_pts_in_thres:
             most_pts_in_thres = sum_pts_in_thres
             best_F = F_tmp
-            inliers_a = np.array(inliers_for_match_a)
-            inliers_b = np.array(inliers_for_match_b)
+            inliers_a = inliers_for_match_a
+            inliers_b = inliers_for_match_b
 
         inliers_for_match_a = []
         inliers_for_match_b = []
+        inlier_error_for_match = []
         sum_pts_in_thres = 0
 
     ###########################################################################
     #                             END OF YOUR CODE                            #
     ###########################################################################
 
-    if np.shape(inliers_a)[0] > 30:
-        choices_inliers = np.random.choice(np.shape(inliers_a)[0], 30, replace=False)
-        inliers_a = inliers_a[choices_inliers]
-        inliers_b = inliers_b[choices_inliers]
+    # if np.shape(inliers_a)[0] > 30:
+    #     choices_inliers = np.random.choice(np.shape(inliers_a)[0], 30, replace=False)
+    #     inliers_a = inliers_a[choices_inliers]
+    #     inliers_b = inliers_b[choices_inliers]
 
     return best_F, inliers_a, inliers_b
