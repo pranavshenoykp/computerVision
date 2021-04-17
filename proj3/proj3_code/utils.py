@@ -393,6 +393,8 @@ def get_matches(pic_a: np.ndarray, pic_b: np.ndarray, n_feat: int) -> (np.ndarra
 
     sift = cv2.xfeatures2d.SIFT_create()
 
+    print(pic_a)
+
     kp_a, desc_a = sift.detectAndCompute(pic_a, None)
     kp_b, desc_b = sift.detectAndCompute(pic_b, None)
     dm = cv2.BFMatcher(cv2.NORM_L2)
