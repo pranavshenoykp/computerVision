@@ -17,7 +17,7 @@ def single2im(im: np.ndarray) -> np.ndarray:
     return im
 
 
-def Get_matches(pic_a: np.ndarray, pic_b: np.ndarray, n_feat: int) -> (np.ndarray, np.ndarray):
+def Get_matches(pic_a: np.ndarray, pic_b: np.ndarray, n_feat: int, mask: np.ndarray = None) -> (np.ndarray, np.ndarray):
     """Get unreliable matching points between two images using SIFT.
 
     You do not need to modify anything in this function, although you can if
@@ -40,8 +40,8 @@ def Get_matches(pic_a: np.ndarray, pic_b: np.ndarray, n_feat: int) -> (np.ndarra
 
     sift = cv2.xfeatures2d.SIFT_create()
 
-    kp_a, desc_a = sift.detectAndCompute(pic_a, None)
-    kp_b, desc_b = sift.detectAndCompute(pic_b, None)
+    kp_a, desc_a = sift.detectAndCompute(pic_a, mask)
+    kp_b, desc_b = sift.detectAndCompute(pic_b, mask)
     dm = cv2.BFMatcher(cv2.NORM_L2)
     matches = dm.knnMatch(desc_b, desc_a, k=2)
     good_matches = []
@@ -57,7 +57,7 @@ def Get_matches(pic_a: np.ndarray, pic_b: np.ndarray, n_feat: int) -> (np.ndarra
     return np.asarray(pts_a), np.asarray(pts_b)
 
 
-def Get_matches2(pic_a: np.ndarray, pic_b: np.ndarray, n_feat: int) -> (np.ndarray, np.ndarray):
+def Get_matches2(pic_a: np.ndarray, pic_b: np.ndarray, n_feat: int, mask: np.ndarray = None) -> (np.ndarray, np.ndarray):
 
     pic_a = cv2.cvtColor(pic_a, cv2.COLOR_BGR2GRAY)
     pic_b = cv2.cvtColor(pic_b, cv2.COLOR_BGR2GRAY)
@@ -71,8 +71,8 @@ def Get_matches2(pic_a: np.ndarray, pic_b: np.ndarray, n_feat: int) -> (np.ndarr
     desc_b = None
 
     orb = cv2.ORB_create()
-    kp_a, desc_a = orb.detectAndCompute(pic_a, None)
-    kp_b, desc_b = orb.detectAndCompute(pic_b, None)
+    kp_a, desc_a = orb.detectAndCompute(pic_a, mask)
+    kp_b, desc_b = orb.detectAndCompute(pic_b, mask)
 
     bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
     matches = bf.match(desc_a, desc_b)
