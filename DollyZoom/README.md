@@ -3,7 +3,7 @@
 Dolly Zoom effect is used by filmmakers to create a sensation of vertigo, a “falling-away-from-oneself feeling”. This effect keeps the size of an object of interests constant in the image, while making the foreground and background objects appear larger or smaller by adjusting focal length and moving the camera.
 
 The technique used here employs a simple cellphone camera without a zoom lens and tries to get the same results
-by means of cropping and warping the images taken at multiple distances instead of using lens zoom. 
+by means of cropping and warping the images taken at multiple distances.
 
 ![](https://github.com/pranavshenoykp/computerVision/blob/main/DollyZoom/small_boat1.gif)
 
