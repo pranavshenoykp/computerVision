@@ -55,12 +55,12 @@ def stereo_helper_fn(im_left, im_right, block_size=[5, 9, 13], max_search_bound=
     """
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 10))
 
-    ax1.imshow(im_left, interpolation=None)
+    ax1.imshow(im_left.data.cpu().numpy(), interpolation=None)
     ax1.title.set_text("Left image")
     ax1.autoscale(False)
     ax1.set_axis_off()
 
-    ax2.imshow(im_right, interpolation=None)
+    ax2.imshow(im_right.data.cpu().numpy(), interpolation=None)
     ax2.title.set_text("Right image")
     ax2.autoscale(False)
     ax2.set_axis_off()
@@ -78,7 +78,7 @@ def stereo_helper_fn(im_left, im_right, block_size=[5, 9, 13], max_search_bound=
         disp_map_sad = calculate_disparity_map(
             im_left,
             im_right,
-            block_size=block,
+            block_size=int(block),
             sim_measure_function=sad_similarity_measure,
             max_search_bound=max_search_bound,
         )
@@ -92,14 +92,14 @@ def stereo_helper_fn(im_left, im_right, block_size=[5, 9, 13], max_search_bound=
             max_search_bound=max_search_bound,
         )
 
-        im = ax1.imshow(disp_map_sad, cmap="jet")
+        im = ax1.imshow(disp_map_sad.data.cpu().numpy(), cmap="jet")
         ax1.set_title("Disparity Map - SAD ({}x{} patch)".format(block, block))
         ax1.autoscale(True)
         ax1.set_axis_off()
         # cbar = fig.colorbar(im, ax=ax1, cmap='jet', shrink=0.3)
         cbar = fig.colorbar(im, ax=ax1, shrink=0.3)
 
-        im = ax2.imshow(disp_map_ssd, cmap="jet")
+        im = ax2.imshow(disp_map_ssd.data.cpu().numpy(), cmap="jet")
         ax2.set_title("Disparity Map - SSD ({}x{} patch)".format(block, block))
         ax2.autoscale(True)
         ax2.set_axis_off()

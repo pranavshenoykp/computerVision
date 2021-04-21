@@ -44,17 +44,27 @@ def generate_random_stereogram(
     """
     H, W, C = im_size
     block_size = (H // 2, W // 2)
-    im_left = torch.zeros(1)  # placeholder, not actual size
-    im_right = torch.zeros(1)  # placeholder, not actual size
+    H_center = H // 2
+    W_center = W // 2
+    im_left = torch.zeros(H,W,C)  # placeholder, not actual size
+    im_right = torch.zeros(H,W,C)  # placeholder, not actual size
 
     ###########################################################################
     # Student code begins
     ###########################################################################
 
-    raise NotImplementedError(
-        "`generate_random_stereogram` function in "
-        + "`part1a_random_stereogram.py` needs to be implemented"
-    )
+    random_im_left_2D = torch.randint(0,2,(H,W))
+    random_im_right_2D = random_im_left_2D.clone()
+    H_start = H_center - block_size[0]//2
+    H_end = H_center + block_size[0]//2
+    W_start = W_center - block_size[1]//2
+    W_end = W_center + block_size[1]//2
+    random_im_right_2D[H_start:H_end, W_start-disparity:W_end-disparity] = random_im_right_2D[H_start:H_end, W_start:W_end]
+    random_im_right_2D[H_start:H_end, W_end-disparity:W_end] = torch.randint(0,2,(H//2-1,disparity))
+
+    for i in range(C):
+      im_left[:,:,i] = random_im_left_2D
+      im_right[:,:,i] = random_im_right_2D
 
     ###########################################################################
     # Student code ends

@@ -94,6 +94,7 @@ def test_disparity_deltafn_failure():
     assert val1 == 0
 
 
+
 def test_disparity_map_size():
     """
     Checks the size of the disparity map

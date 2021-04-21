@@ -16,10 +16,16 @@ def test_generate_random_stereogram():
 
     # assert that they are same in all the channels
     for ch_idx in range(1, left_img.shape[2]):
+        if torch.nonzero(left_img[:, :, 0] != left_img[:, :, ch_idx]).shape[0]:
+            print('1')
+
+        if torch.nonzero(left_img[:, :, 0] != left_img[:, :, ch_idx]).shape[0]:
+            print('2')
+
         assert torch.nonzero(left_img[:, :, 0] != left_img[:, :, ch_idx]).shape[0] == 0
         assert torch.nonzero(right_img[:, :, 0] != right_img[:, :, ch_idx]).shape[0] == 0
 
-    diff_img = torch.abs(left_img - right_img)
+    diff_img = torch.abs(left_img[:, :, 0] - right_img[:, :, 0])
 
     # get the region where left and right images are different
     nonzero_idx = torch.nonzero(diff_img)

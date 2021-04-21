@@ -23,14 +23,18 @@ def ssd_similarity_measure(patch1: torch.Tensor, patch2: torch.Tensor) -> float:
     assert patch1.shape == patch2.shape
     ssd = 0  # placeholder
 
+    patch1 = torch.tensor(patch1)
+    patch2 = torch.tensor(patch2)
+
     ###########################################################################
     # Student code begins
     ###########################################################################
 
-    raise NotImplementedError(
-        "`ssd_similarity_measure` function in "
-        + "`part1b_similarity_measure.py` needs to be implemented"
-    )
+    tmp = patch1 - patch2
+    tmp = tmp * tmp
+    ssd = tmp.sum()
+
+    ssd = float(ssd)
 
     ###########################################################################
     # Student code ends
@@ -56,14 +60,18 @@ def sad_similarity_measure(patch1: torch.Tensor, patch2: torch.Tensor) -> float:
     assert patch1.shape == patch2.shape
     sad = 0  # placeholder
 
+    patch1 = torch.tensor(patch1)
+    patch2 = torch.tensor(patch2)
+
     ###########################################################################
     # Student code begins
     ###########################################################################
 
-    raise NotImplementedError(
-        "`sad_similarity_measure` function in "
-        + "`part1b_similarity_measure.py` needs to be implemented"
-    )
+    tmp = patch1 - patch2
+    tmp = tmp.absolute()
+    sad = tmp.sum()
+
+    sad = float(sad)
 
     ###########################################################################
     # Student code ends

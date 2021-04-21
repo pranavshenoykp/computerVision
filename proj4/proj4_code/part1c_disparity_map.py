@@ -53,16 +53,29 @@ def calculate_disparity_map(
     """
 
     assert left_img.shape == right_img.shape
-    disp_map = torch.zeros(1)  # placeholder, this is not the actual size
+    (H,W,C) = left_img.shape
+    H_offset = block_size//2
+    W_offset = block_size//2
+    disp_map = torch.zeros(H-2*H_offset,W-2*W_offset)  # placeholder, this is not the actual size
+
 
     ###########################################################################
     # Student code begins
     ###########################################################################
 
-    raise NotImplementedError(
-        "`calculate_disparity_map` function in "
-        + "`part1c_disparity_map.py` needs to be implemented"
-    )
+    for ii in range(H-2*H_offset):
+        for jj in range(W-2*W_offset):
+            left_patch = left_img[ii:ii+block_size,jj:jj+block_size, :]
+            similarity_error_array = -1 * np.ones(max_search_bound)
+            
+            for kk in range(max_search_bound):
+                jj_start = max(jj - kk, 0)
+                jj_end = max(jj - kk + block_size, block_size)
+
+                right_patch = right_img[ii:ii+block_size, jj_start:jj_end, :]
+                similarity_error_array[kk] = sim_measure_function(left_patch, right_patch)
+
+            disp_map[ii,jj] = np.argmin(similarity_error_array)
 
     ###########################################################################
     # Student code ends
@@ -109,16 +122,30 @@ def calculate_cost_volume(
     # placeholders
     H = left_img.shape[0]
     W = right_img.shape[1]
-    cost_volume = torch.zeros(H, W, max_disparity)
+    H_offset = block_size//2
+    W_offset = block_size//2
+    cost_volume = torch.ones(H, W, max_disparity) * 255
 
     ###########################################################################
     # Student code begins
     ###########################################################################
 
-    raise NotImplementedError(
-        "`calculate_cost_volume` function in "
-        + "`part1c_disparity_map.py` needs to be implemented"
-    )
+    for ii in range(H-2*H_offset):
+        for jj in range(W-2*W_offset):
+            left_patch = left_img[ii:ii+block_size,jj:jj+block_size, :]
+            similarity_error_array = np.ones(max_disparity)
+            
+            for kk in range(max_disparity):
+                if jj - kk >= 0:
+                    jj_start = max(jj - kk, 0)
+                    jj_end = max(jj - kk + block_size, block_size)
+
+                    right_patch = right_img[ii:ii+block_size, jj_start:jj_end, :]
+                    similarity_error_array[kk] = sim_measure_function(left_patch, right_patch)
+                else:
+                    similarity_error_array[kk] = 255.0
+
+            cost_volume[ii+H_offset,jj+W_offset,:] = torch.tensor(similarity_error_array)
 
     ###########################################################################
     # Student code ends
