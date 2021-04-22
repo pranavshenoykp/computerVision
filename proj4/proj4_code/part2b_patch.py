@@ -27,9 +27,11 @@ def gen_patch(image: torch.Tensor, x: int, y: int, ws: int = 11) -> torch.Tensor
     # Student code begins
     ###########################################################################
 
-    raise NotImplementedError(
-        "`gen_patch` function in " + "`part2b_patch.py` needs to be implemented"
-    )
+    [C, width, height] = image.shape
+
+    padded_image = torch.zeros(C, width+ws-1, height+ws-1)
+    padded_image[:,0:width,0:height] = image
+    patch = padded_image[:,x:x+ws, y:y+ws]
 
     ###########################################################################
     # Student code ends
