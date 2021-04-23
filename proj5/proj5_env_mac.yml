@@ -1,0 +1,15 @@
+name: cs6476_proj5
+channels:
+- pytorch
+- menpo
+- defaults
+dependencies:
+- jupyter
+- matplotlib
+- python=3.8
+- scipy
+- opencv
+- pytorch
+- torchvision=0.2
+- pip
+- pyyaml

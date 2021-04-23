@@ -1,0 +1,14 @@
+name: cs6476_proj5
+channels:
+- pytorch
+- defaults
+dependencies:
+- jupyter
+- matplotlib
+- python=3.8
+- scipy
+- opencv
+- pytorch-cpu
+- torchvision-cpu=0.2
+- pip
+- pyyaml
