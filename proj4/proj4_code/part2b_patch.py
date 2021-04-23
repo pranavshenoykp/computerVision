@@ -34,14 +34,16 @@ def gen_patch(image: torch.Tensor, x: int, y: int, ws: int = 11) -> torch.Tensor
     padded_image[:,ws-1:width+ws-1,ws-1:height+ws-1] = image
     patch = padded_image[:,x+ws-1:x+ws+ws-1, y+ws-1:y+ws+ws-1]
 
-    # print("patch:",patch.shape)
-    # print("image:",image.shape)
-    # print("padded_image:",padded_image.shape)
-    # print("X:",[x, x+ws])
-    # print("Y:",[y, y+ws])
+    
 
-    if np.shape(patch.shape) !=3:
+    if x < -ws+1 or y < -ws+1 or x >= width or y >= height:
+        # print("patch:",patch.shape)
+        # print("image:",image.shape)
+        # print("padded_image:",padded_image.shape)
+        # print("X:",[x, x+ws])
+        # print("Y:",[y, y+ws])
         patch = torch.zeros([C, ws, ws])
+
 
     ###########################################################################
     # Student code ends

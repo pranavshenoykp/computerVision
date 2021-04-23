@@ -84,10 +84,11 @@ def calculate_mccnn_cost_volume(
     # print("vals:", [C,H,W,num_ch, H_cnn, W_cnn])
     # print("block_size", block_size)
 
-    cost_volume = torch.zeros([H-2*(block_size//2), W-2*(block_size//2), max_search_bound])
+    # cost_volume = torch.zeros([H-2*(block_size//2), W-2*(block_size//2), max_search_bound])
+    cost_volume_min = torch.zeros([H-2*(block_size//2), W-2*(block_size//2)])
 
     for ii in range(block_size//2, H-(block_size//2)):
-        for jj in range(block_size//2, H-(block_size//2)):
+        for jj in range(block_size//2, W-(block_size//2)):
             cnn_patch = cnn_left_img[:,:,ii-(block_size//2):ii+(block_size//2)+1,jj-(block_size//2):jj+(block_size//2)+1]
             # print([ii-(block_size//2),ii+(block_size//2),jj-(block_size//2)+1,jj+(block_size//2)+1])
             # print("cnn_patch:", cnn_patch.shape)
@@ -98,14 +99,17 @@ def calculate_mccnn_cost_volume(
                 cnn_search_window[kk,:,:,:] = cnn_right_img[0,:,ii-(block_size//2):ii+(block_size//2)+1,jj_start:jj_end]
             # print("cnn_search_window:", cnn_search_window.shape)
             tmp1 = mc_cnn_similarity(fc_layers, cnn_patch, cnn_search_window)
+            del cnn_search_window
+            del cnn_patch
             # print("tmp1:", tmp1.shape)
-            cost_volume[ii-(block_size//2),jj-(block_size//2),:] = tmp1
+            cost_volume_min[ii-(block_size//2),jj-(block_size//2)] = float(torch.argmin(tmp1[:,0])) # Added argmin here because of CUDA memory issues
+            del tmp1
             # print(">>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<")
     ###########################################################################
     # Student code ends
     ###########################################################################
 
-    return cost_volume
+    return cost_volume_min
 
 
 def calculate_mccnn_disparity_map(
@@ -166,7 +170,8 @@ def calculate_mccnn_disparity_map(
         max_search_bound=max_search_bound,
     )
 
-    return torch.argmin(cost_volume, dim=-1)
+    # return torch.argmin(cost_volume, dim=-1)
+    return cost_volume
 
 
 def mc_cnn_similarity(
@@ -227,6 +232,8 @@ def mc_cnn_similarity(
         concatenated_patches[i,:] = tmp
 
     cnn_similarity = fc_layers(concatenated_patches)
+
+    del concatenated_patches
     ###########################################################################
     # Student code ends
     ###########################################################################
