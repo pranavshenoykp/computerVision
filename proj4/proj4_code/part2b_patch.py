@@ -3,6 +3,7 @@
 """Generates a patch from an image."""
 
 import torch
+import numpy as np
 
 
 def gen_patch(image: torch.Tensor, x: int, y: int, ws: int = 11) -> torch.Tensor:
@@ -29,9 +30,18 @@ def gen_patch(image: torch.Tensor, x: int, y: int, ws: int = 11) -> torch.Tensor
 
     [C, width, height] = image.shape
 
-    padded_image = torch.zeros(C, width+ws-1, height+ws-1)
-    padded_image[:,0:width,0:height] = image
-    patch = padded_image[:,x:x+ws, y:y+ws]
+    padded_image = torch.zeros(C, width+2*(ws-1), height+2*(ws-1))
+    padded_image[:,ws-1:width+ws-1,ws-1:height+ws-1] = image
+    patch = padded_image[:,x+ws-1:x+ws+ws-1, y+ws-1:y+ws+ws-1]
+
+    # print("patch:",patch.shape)
+    # print("image:",image.shape)
+    # print("padded_image:",padded_image.shape)
+    # print("X:",[x, x+ws])
+    # print("Y:",[y, y+ws])
+
+    if np.shape(patch.shape) !=3:
+        patch = torch.zeros([C, ws, ws])
 
     ###########################################################################
     # Student code ends
