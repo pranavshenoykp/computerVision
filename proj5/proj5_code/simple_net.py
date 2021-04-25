@@ -20,8 +20,23 @@ class SimpleNet(nn.Module):
         # Student code begins
         #######################################################################
 
-        raise NotImplementedError('`__init__` function in '
-            + '`simple_net.py` needs to be implemented')
+        self.conv_layers = nn.Sequential(
+            nn.Conv2d(1, 10, kernel_size=5, stride=1),
+            nn.ReLU(),
+            nn.MaxPool2d(3),
+            nn.Conv2d(10, 20, kernel_size=5, stride=1),
+            nn.ReLU(),
+            nn.MaxPool2d(3)
+            )
+
+        conv_out = int(20*5*5)
+
+        self.fc_layers = nn.Sequential(
+            nn.Linear(conv_out, 100),
+            nn.Linear(100, 15)
+            )
+
+        self.loss_criterion = nn.MSELoss(reduction='mean')
 
         #######################################################################
         # Student code ends
@@ -42,8 +57,13 @@ class SimpleNet(nn.Module):
         # Student code begins
         #######################################################################
 
-        raise NotImplementedError('`forward` function in '
-            + '`simple_net.py` needs to be implemented')
+        (N,C,H,W) = x.shape
+
+        conv_features = self.conv_layers(x)
+  
+        flat_features = conv_features.reshape(-1, 500)
+        model_output = self.fc_layers(flat_features)
+
 
         #######################################################################
         # Student code ends

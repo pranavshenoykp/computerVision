@@ -29,13 +29,17 @@ def get_optimizer(
     optimizer_type = config.get("optimizer_type", "sgd")
     learning_rate = config.get("lr", 1e-3)
     weight_decay = config.get("weight_decay", 1e-5)
+    steps = config.get("steps", 10)
     ###########################################################################
     # Student code begins
     ###########################################################################
 
-    raise NotImplementedError('`get_optimizer` function in '
-        + '`optimizer.py` needs to be implemented')
+    if optimizer_type  == "adam":
+        optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
+    else:
+        optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, weight_decay=weight_decay)
 
+    # scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, steps)
     ###########################################################################
     # Student code ends
     ###########################################################################

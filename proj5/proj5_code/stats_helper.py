@@ -31,8 +31,19 @@ def compute_mean_and_std(dir_name: str) -> Tuple[float, float]:
     # Student code begin
     ############################################################################
 
-    raise NotImplementedError('`compute_mean_and_std` function in '
-        + '`stats_helper.py` needs to be implemented')
+    mean_array = []
+    std_array = []
+
+    for file in glob.glob(os.path.join(dir_name,"*","*","*.jpg")):
+        img = Image.open(file)
+        img = img.convert("L")
+        img = np.array(img, dtype=np.float32)
+        img = img / 255.0
+        mean_array.append(np.mean(img))
+        std_array.append(np.std(img))
+
+    mean = np.mean(mean_array)
+    std = np.mean(std_array)
 
     ############################################################################
     # Student code end

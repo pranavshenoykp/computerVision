@@ -21,8 +21,31 @@ class SimpleNetFinal(nn.Module):
         # Student code begins
         #######################################################################
 
-        raise NotImplementedError('`__init__` function in '
-            + '`simple_net_final.py` needs to be implemented')
+        self.conv_layers = nn.Sequential(
+            nn.Conv2d(1, 10, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.BatchNorm2d(10),
+            nn.Conv2d(10, 10, kernel_size=5, stride=1),
+            nn.ReLU(),
+            nn.BatchNorm2d(10),
+            nn.MaxPool2d(3),
+            nn.Conv2d(10, 20, kernel_size=5, stride=1, padding=2),
+            nn.ReLU(),
+            nn.BatchNorm2d(20),
+            nn.Dropout(p=0.2),
+            nn.Conv2d(20, 20, kernel_size=5, stride=1),
+            nn.ReLU(),
+            nn.MaxPool2d(3)
+            )
+
+        conv_out = int(20*5*5)
+
+        self.fc_layers = nn.Sequential(
+            nn.Linear(conv_out, 100),
+            nn.Linear(100, 15)
+            )
+
+        self.loss_criterion = nn.MSELoss(reduction='mean')
 
         #######################################################################
         # Student code ends
@@ -43,8 +66,12 @@ class SimpleNetFinal(nn.Module):
         # Student code begins
         #######################################################################
 
-        raise NotImplementedError('`forward` function in '
-            + '`simple_net_final.py` needs to be implemented')
+        conv_features = self.conv_layers(x)
+
+        (N,C,H,W) = conv_features.shape
+  
+        flat_features = conv_features.reshape(-1, 500)
+        model_output = self.fc_layers(flat_features)
 
         #######################################################################
         # Student code ends

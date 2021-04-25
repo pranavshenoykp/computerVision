@@ -20,13 +20,11 @@ def get_fundamental_transforms(
         fundamental_transforms: transforms.Compose with the fundamental
             transforms
     """
-    fundamental_transforms = None
     ###########################################################################
     # Student code begins
     ###########################################################################
 
-    raise NotImplementedError('`get_fundamental_transforms` function in '
-        + '`data_transforms.py` needs to be implemented')
+    fundamental_transforms = transforms.Compose([transforms.ToTensor(), transforms.Resize((inp_size))])
 
     ###########################################################################
     # Student code ends
@@ -39,7 +37,7 @@ def get_fundamental_augmentation_transforms(
     """
     Returns the core transforms in addition to augmentation.
 
-    A few uggestions: Jittering, Flipping, Cropping, Rotating.
+    A few suggestions: Jittering, Flipping, Cropping, Rotating.
     Args:
         inp_size: tuple denoting the dimensions for input to the model
 
@@ -52,8 +50,10 @@ def get_fundamental_augmentation_transforms(
     # Student code begin
     ###########################################################################
 
-    raise NotImplementedError('`get_fundamental_augmentation_transforms` '
-        + 'function in `data_transforms.py` needs to be implemented')
+    fund_aug_transforms = transforms.Compose([transforms.ToTensor(),
+                                            transforms.Resize((inp_size)), 
+                                            transforms.RandomHorizontalFlip(),
+                                            transforms.ColorJitter()])
 
     ###########################################################################
     # Student code end
@@ -87,8 +87,9 @@ def get_fundamental_normalization_transforms(
     # Student code begins
     ###########################################################################
 
-    raise NotImplementedError('`get_fundamental_normalization_transforms` '
-        + 'function in `data_transforms.py` needs to be implemented')
+    fund_norm_transforms = transforms.Compose([transforms.ToTensor(),
+                                            transforms.Resize((inp_size)), 
+                                            transforms.Normalize(pixel_mean, pixel_std)])
 
     ###########################################################################
     # Student code ends
@@ -120,8 +121,11 @@ def get_all_transforms(
     # Student code begins
     ###########################################################################
 
-    raise NotImplementedError('`get_all_transforms` function in '
-        + '`data_transforms.py` needs to be implemented')
+    all_transforms = transforms.Compose([transforms.ToTensor(),
+                                        transforms.Resize((inp_size)), 
+                                        transforms.RandomHorizontalFlip(),
+                                        transforms.ColorJitter(),
+                                        transforms.Normalize(pixel_mean, pixel_std)])
 
     ###########################################################################
     # Student code ends

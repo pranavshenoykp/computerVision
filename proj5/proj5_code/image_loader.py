@@ -11,6 +11,8 @@ import torchvision
 from PIL import Image
 import torch.utils.data as data
 
+import torchvision.transforms as transforms
+
 
 class ImageLoader(data.Dataset):
     """Class for data loading"""
@@ -45,6 +47,7 @@ class ImageLoader(data.Dataset):
         self.class_dict = self.get_classes()
         self.dataset = self.load_imagepaths_with_labels(self.class_dict)
 
+
     def load_imagepaths_with_labels(
         self, class_labels: Dict[str, int]
     ) -> List[Tuple[str, int]]:
@@ -64,8 +67,10 @@ class ImageLoader(data.Dataset):
         # Student code begins
         #######################################################################
 
-        raise NotImplementedError('`load_imagepaths_with_labels` function in '
-            + '`image_loader.py` needs to be implemented')
+        for label, idx in class_labels.items():
+            path = os.path.join(self.curr_folder, label)
+            for file in glob.glob(os.path.join(path,"*.jpg")):
+                img_paths.append((file, idx))
 
         #######################################################################
         # Student code ends
@@ -94,8 +99,11 @@ class ImageLoader(data.Dataset):
         # Student code begins
         #######################################################################
 
-        raise NotImplementedError('`get_classes` function in '
-            + '`dl_utils.py` needs to be implemented')
+        class_labels = os.listdir(self.curr_folder)
+        class_labels.sort()
+
+        for idx,label in enumerate(class_labels):
+            classes[label] = int(idx)
 
         #######################################################################
         # Student code ends
@@ -121,8 +129,9 @@ class ImageLoader(data.Dataset):
         # Student code begins
         #######################################################################
 
-        raise NotImplementedError('`load_img_from_path` function in '
-            + '`dl_utils.py` needs to be implemented')
+        img = Image.open(path)
+        # img = img.resize((256,256))
+        img = img.convert("L")
 
         #######################################################################
         # Student code ends
@@ -137,7 +146,7 @@ class ImageLoader(data.Dataset):
 
         Hints:
         1) Get info from self.dataset
-        2) Ise load_img_from_path
+        2) Use load_img_from_path
         3) Apply transforms if valid
 
         Args:
@@ -153,8 +162,9 @@ class ImageLoader(data.Dataset):
         # Student code starts
         #######################################################################
 
-        raise NotImplementedError('`__getitem__` function in '
-            + '`dl_utils.py` needs to be implemented')
+        (image_path, class_idx) = self.dataset[index]
+        trans = self.transform
+        img = trans(self.load_img_from_path(image_path))
 
         #######################################################################
         # Student code ends
@@ -175,8 +185,7 @@ class ImageLoader(data.Dataset):
         # Student code starts
         #######################################################################
 
-        raise NotImplementedError('`__len__` function in '
-            + '`dl_utils.py` needs to be implemented')
+        l = len(self.dataset)
 
         #######################################################################
         # Student code ends

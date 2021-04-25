@@ -33,22 +33,36 @@ def generate_confusion_data(
 
     batch_size = 32
     cuda = use_cuda and torch.cuda.is_available()
+    device = torch.device("cuda" if use_cuda else "cpu")
+    tensor_type = torch.cuda.FloatTensor if use_cuda else torch.FloatTensor
+    torch.set_default_tensor_type(tensor_type)
     dataloader_args = {"num_workers": 1, "pin_memory": True} if cuda else {}
     loader = DataLoader(
         dataset, batch_size=batch_size, shuffle=True,**dataloader_args)
 
-    preds = np.zeros(len(dataset)).astype(np.int32)
-    targets = np.zeros(len(dataset)).astype(np.int32)
+    preds = torch.zeros(len(dataset))
+    targets = torch.zeros(len(dataset))
     label_to_idx = dataset.get_classes()
-    class_labels = [""] * len(label_to_idx)
+    
 
     model.eval()
     ###########################################################################
     # Student code begins
     ###########################################################################
 
-    raise NotImplementedError('`generate_confusion_data` function in '
-        + '`confusion_matrix.py` needs to be implemented')
+    class_labels = list(label_to_idx.keys())
+
+    start = 0
+    for _, (x_batch_val, y_batch_val) in enumerate(loader):
+        if torch.cuda.is_available():
+            x_batch_val = x_batch_val.cuda().to(device)
+            y_batch_val = y_batch_val.cuda().to(device)
+        output = model(x_batch_val)
+        preds[start:start+len(y_batch_val)] = torch.argmax(output,dim=1)
+        targets[start:start+len(y_batch_val)] = y_batch_val
+
+        start = start+len(y_batch_val)
+
 
     ###########################################################################
     # Student code ends
@@ -97,13 +111,15 @@ def generate_confusion_matrix(
 
     confusion_matrix = np.zeros((num_classes, num_classes))
 
+    targets = targets.astype(np.int)
+    preds = preds.astype(np.int)
+
     for target, prediction in zip(targets, preds):
         #######################################################################
         # Student code begins
         #######################################################################
 
-        raise NotImplementedError('`generate_confusion_matrix` function in '
-            + '`confusion_matrix.py` needs to be implemented')
+        confusion_matrix[target, prediction] = confusion_matrix[target, prediction] + 1
 
         #######################################################################
         # Student code ends
@@ -113,10 +129,11 @@ def generate_confusion_matrix(
         #######################################################################
         # Student code begins
         #######################################################################
+        div = np.ones(num_classes)
+        for i in range(num_classes):
+            div[i] = np.sum(targets == i)
 
-        raise NotImplementedError('`generate_confusion_matrix` function in '
-            + '`confusion_matrix.py` needs to be implemented')
-
+        confusion_matrix = confusion_matrix / div
         #######################################################################
         # Student code ends
         #######################################################################
