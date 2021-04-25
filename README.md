@@ -1,1 +1,1 @@
-Computer Vision projects from Georgia Tech and what not
+Computer Vision projects from Georgia Tech, UPenn and what not
