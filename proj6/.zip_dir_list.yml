@@ -1,0 +1,6 @@
+required_directories:
+  - proj6_code
+optional_directories:
+required_files:
+optional_files:
+  - grayscale_predictions.zip

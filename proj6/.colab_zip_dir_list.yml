@@ -1,0 +1,11 @@
+required_directories:
+  - proj6_code
+  - dataset_lists
+  - Camvid
+required_files:
+ - setup.py
+ - download_dataset.sh
+ - README.md
+optional_files:
+
+new_directories:
