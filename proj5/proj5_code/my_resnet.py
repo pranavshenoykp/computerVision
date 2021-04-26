@@ -27,8 +27,24 @@ class MyResNet18(nn.Module):
         # Student code begins
         #######################################################################
 
-        raise NotImplementedError('`__init__` function in '
-            + '`my_resnet.py` needs to be implemented')
+        model = resnet18(pretrained=True)
+        model = model.cuda()
+
+        children = model.children()
+        self.conv_layers = nn.Sequential(*list(children)[:-1])
+
+        for param in self.conv_layers.parameters():
+            param.requires_grad = False
+
+        conv_out_features = int(model.fc.in_features)
+
+        self.fc_layers = nn.Sequential(
+            nn.Linear(conv_out_features, 100),
+            nn.Linear(100, 15)
+            )
+
+        self.loss_criterion = nn.MSELoss(reduction='mean')
+
 
         #######################################################################
         # Student code ends
@@ -52,8 +68,12 @@ class MyResNet18(nn.Module):
         # Student code begins
         #######################################################################
 
-        raise NotImplementedError('`forward` function in '
-            + '`my_resnet.py` needs to be implemented')
+        conv_features = self.conv_layers(x)
+
+        (N,C,H,W) = conv_features.shape
+  
+        flat_features = conv_features.reshape(-1, 512)
+        model_output = self.fc_layers(flat_features)
 
         #######################################################################
         # Student code ends

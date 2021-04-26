@@ -16,6 +16,8 @@ def test_my_resnet():
         num_params_nograd,
     ) = extract_model_layers(this_res_net)
 
+    print(output_dim, num_params_grad, num_params_nograd)
+
     assert output_dim == 15
     assert num_params_grad < 10000
     assert num_params_nograd > 1e7
