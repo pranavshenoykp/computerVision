@@ -8,8 +8,8 @@ dependencies:
 - python=3.8
 - scipy
 - opencv
-- pytorch-cpu
-- torchvision-cpu=0.2
+- pytorch=1.8.0
+- torchvision=0.9.0
 - pip
 - pyyaml
 - imageio
